@@ -1,3 +1,5 @@
+console.clear();
+
 function getScene() {
   var scene = new THREE.Scene();
   scene.background = new THREE.Color(0x111111);
@@ -12,9 +14,6 @@ function getCamera() {
   return camera;
 }
 
-/**
- * Generate the renderer to be used in the scene
- **/
 function getRenderer() {
   var renderer = new THREE.WebGLRenderer({antialias: true});
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -23,15 +22,13 @@ function getRenderer() {
   return renderer;
 }
 
-
 function addTexture() {
-
   var shape = new THREE.Shape();
   shape.moveTo(108.5, 0.5);
   shape.bezierCurveTo(87.5, 0.5, -10.5, 160.5, 1.5, 176.5);
   shape.bezierCurveTo(13.5, 192.5, 196.5, 197.5, 206.5, 179.5);
   shape.bezierCurveTo(216.5, 161.5, 129.5, 0.5, 108.5, 0.5);
-
+  
   var extrudeSettings = {
     steps: 2,
     depth: 16,
@@ -40,63 +37,27 @@ function addTexture() {
     bevelSize: 1,
     bevelSegments: 1
   };
-
   var geometry = new THREE.ExtrudeBufferGeometry( shape, extrudeSettings );
+  geometry.computeFaceNormals();
+  geometry.computeVertexNormals();
 
   var material = new THREE.MeshPhongMaterial({
     color: 0x00ff00,
     wireframe: false
   });
-
-  geometry.computeFaceNormals();
-  geometry.computeVertexNormals();
-
   var mesh = new THREE.Mesh(geometry, material);
-
   mesh.position.set(0, 0, 0);
   mesh.scale.set(0.008, 0.008, 0.008);
-
   mesh.geometry.verticesNeedUpdate = true;
   mesh.geometry.normalsNeedUpdate = true;
-
-  // mesh.receiveShadow = true;
   mesh.castShadow = true;
 
-  geometricWave = mesh;
+  geometricObj = mesh;
 
   gridHelper();
   scene.add(mesh);
-
-
-  var shape2 = new THREE.Shape();
-  shape2.moveTo(108.5, 0.5);
-  shape2.bezierCurveTo(87.5, 0.5, -10.5, 160.5, 1.5, 176.5);
-  shape2.bezierCurveTo(13.5, 192.5, 196.5, 197.5, 206.5, 179.5);
-  shape2.bezierCurveTo(216.5, 161.5, 129.5, 0.5, 108.5, 0.5);
-
-
-
-  var geometry2 = new THREE.BufferGeometry( shape2 );
-  var material2 = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
-    wireframe: false
-  });
-
-
-  var mesh2 = new THREE.Mesh(geometry2, material2);
-
-  mesh2.position.set(0, 0, 0);
-  mesh2.scale.set(0.003, 0.003, 0.003);
-
-  mesh2.geometry.verticesNeedUpdate = true;
-  mesh2.geometry.normalsNeedUpdate = true;
-
-
-  scene.add(mesh2);
   addLight();
-
 }
-
 
 function gridHelper() {
 
@@ -104,9 +65,7 @@ function gridHelper() {
   scene.add(gridHelper);
 }
 
-
 function addLight() {
-
   const light = new THREE.DirectionalLight();
   light.position.set(200, 100, 200);
   light.castShadow = true;
@@ -115,20 +74,26 @@ function addLight() {
   light.shadow.camera.top = 100;
   light.shadow.camera.bottom = -100;
   scene.add(light);
-
 }
 
+function mouseMove(e){
+    if (e.clientX>200 && camera.position.x<=1) { 
+      camera.position.x += 0.01; 
+      geometricObj.rotation.y -= 0.02;
+    }  else if (e.clientX<210 && e.clientX>0 &&camera.position.x>=-1 || camera.position.x>=1 && e.clientX>0&&e.clientX<210) {
+      camera.position.x -= 0.01; 
+      geometricObj.rotation.y += 0.02;
+    }
+}
+window.addEventListener('mousemove', mouseMove);
 
 function render() {
-
   requestAnimationFrame(render);
   renderer.render(scene, camera);
-  f();
-
 };
 
-function f() {
-  geometricWave.rotation.y += 0.02;
+function rotate() {
+  geometricObj.rotation.y += 0.02;
 }
 
 var scene = getScene();
@@ -136,12 +101,10 @@ var camera = getCamera();
 var renderer = getRenderer();
 // var controls = getControls(camera, renderer);
 var cube;
-var geometricWave;
+var geometricObj;
 var a = 0;
-var noise = new SimplexNoise();
 var center = new THREE.Vector2(100, 100);
 var edges;
 
 addTexture();
 render();
-// f();
