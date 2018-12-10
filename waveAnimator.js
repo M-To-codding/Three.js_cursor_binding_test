@@ -77,11 +77,11 @@ function addLight() {
 }
 
 function mouseMove(e){
-    if (e.clientX>200 && camera.position.x<=1) { 
-      camera.position.x += 0.01; 
+    if (e.clientX>window.innerWidth/2 && camera.position.x<=1) {
+      camera.position.x += 0.01;
       geometricObj.rotation.y -= 0.02;
-    }  else if (e.clientX<210 && e.clientX>0 &&camera.position.x>=-1 || camera.position.x>=1 && e.clientX>0&&e.clientX<210) {
-      camera.position.x -= 0.01; 
+    }  else if (e.clientX<=window.innerWidth/2 && e.clientX>0 &&camera.position.x>=-1 || camera.position.x>=1 && e.clientX>0&&e.clientX<=window.innerWidth/2) {
+      camera.position.x -= 0.01;
       geometricObj.rotation.y += 0.02;
     }
 }
